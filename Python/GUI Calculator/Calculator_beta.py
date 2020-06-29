@@ -17,7 +17,6 @@ def clear():
     en.delete(0, END)
 
 def operate():
-    calc.geometry("500x650+350+150")
     value = en.get()
     clear()
     en.insert(END, eval(str(value)))
