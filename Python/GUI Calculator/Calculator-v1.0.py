@@ -1,7 +1,7 @@
 #Thank you for viewing this code.
 #A huge round of applause to Crossroads team for all those efforts.
 
-#Please check Calculator_beta to view the latest additions to this version.
+#Please check Calculator_beta to view the calculator in devolopment phase.
 
 from tkinter import *
 import math
