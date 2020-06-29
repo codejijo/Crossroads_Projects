@@ -1,3 +1,8 @@
+#Thank you for viewing this code.
+#A huge round of applause to Crossroads team for all those efforts.
+
+#Please check Calculator_beta to view the latest additions to this version.
+
 from tkinter import *
 import math
 
@@ -67,3 +72,6 @@ btn_div.pack(side=LEFT, expand=True, fill="both", ipadx=6)
 # lab1.pack(side=LEFT, expand=True, fill="both")
 
 calc.mainloop()
+
+#contact : +919544151856
+#email : jijojohnlikeu@gmail.com
