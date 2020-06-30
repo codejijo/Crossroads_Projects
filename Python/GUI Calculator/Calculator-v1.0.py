@@ -33,16 +33,14 @@ def operate():
     # lab.configure(text = eval(str(value)))
 
 def hoverin(a):
-    # print("kitti")
     numbtns[int(a.widget["text"])-1].configure(background="#a8dadc")
 def hoverout(a):
-    # print("poyi")
     numbtns[int(a.widget["text"])-1].configure(background="#f1faee")
 
 enframe = Frame(calc, width=300, height=300)
 enframe.pack(expand=True, fill="both", ipady=12)
 
-en = Entry(enframe, font=("Helvetica", 25,'bold'), background="#264653", fg="#fff",justify=RIGHT)
+en = Entry(enframe, font=("Helvetica", 25,'bold'), background="#264653", fg="#fff",border=0,justify=RIGHT)
 en.pack(expand=True, fill="both", ipady=12)
 
 btnframe = [Frame(calc) for i in range(5)]

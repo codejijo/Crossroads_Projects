@@ -1,10 +1,15 @@
 from tkinter import *
 import math
+from tkinter import ttk
 
 calc = Tk()
 calc.geometry("300x480+450+100")
-calc.resizable(0, 0)
+calc.minsize(300, 480)
+# calc.resizable(0, 0)
 calc.title("Calculator")
+
+thm = IntVar()
+
 
 def show(a):
     # print(a)
@@ -12,6 +17,7 @@ def show(a):
         en.insert(END, a)
     else:
         en.insert(END, a.widget["text"])
+
 
 def clear(a):
     if a == "b":
@@ -21,23 +27,36 @@ def clear(a):
     else:
         en.delete(0, END)
 
+
 def operate():
     value = en.get()
     en.delete(0, END)
     en.insert(END, eval(str(value)))
     # lab.configure(text = eval(str(value)))
 
+
+#         0black, 1white, 2number,    3clear,    4back,    5equal,   6operator,  7screen, 8scrn_font
+color = [["#000", "#fff", "#f1faee", "#e63946", "#f48c06", "#aacc00", "#2a9d8f", "#264653", "#fff"],
+         ["#000", "#000", "#cbf3f0", "#ff9f1c", "#2ec4b6", "#ffbf69", "#2ec4b6", "#fdfffc", "#000"],
+         ["#000", "#fff", "#d9d9d9", "#353535", "#353535", "#284b63", "#353535", "#ffffff", "#000"],
+         ["#fff", "#fff", "#000", "#000", "#000", "orange", "#000", "#000", "#fff"]]
+
+
 def hoverin(a):
     # print("kitti")
-    numbtns[int(a.widget["text"])-1].configure(background="#a8dadc")
+    numbtns[int(a.widget["text"]) - 1].configure(background="#a8dadc", fg="#000")
+
+
 def hoverout(a):
     # print("poyi")
-    numbtns[int(a.widget["text"])-1].configure(background="#f1faee")
+    numbtns[int(a.widget["text"]) - 1].configure(background=color[thm.get()][2], fg=color[thm.get()][0])
 
-enframe = Frame(calc, width=300, height=300)
-enframe.pack(expand=True, fill="both", ipady=12)
 
-en = Entry(enframe, font=("Helvetica", 25,'bold'), background="#264653", fg="#fff",justify=RIGHT)
+entry_frame = Frame(calc, width=300, height=300)
+entry_frame.pack(expand=True, fill="both", ipady=12)
+
+en = Entry(entry_frame, font=("Helvetica", 25, 'bold'), background=color[thm.get()][7], fg=color[thm.get()][8],
+           border=0, justify=RIGHT)
 en.pack(expand=True, fill="both", ipady=12)
 
 btnframe = [Frame(calc) for i in range(6)]
@@ -45,38 +64,79 @@ for i in btnframe:
     i.pack(expand=True, fill="both")
 
 numbtns = [Button(btnframe[4 - math.ceil(i / 3)], text=str(i), font=("Verdana", 22),
-                  relief=GROOVE, border=0,background="#f1faee", fg="#000") for i in range(1, 10)]
+                  relief=GROOVE, border=0, background=color[thm.get()][2], fg=color[thm.get()][0]) for i in
+           range(1, 10)]
 for i in numbtns:
     i.pack(side=LEFT, expand=True, fill="both")
     i.bind('<Button-1>', show)
     i.bind('<Enter>', hoverin)
     i.bind('<Leave>', hoverout)
 
-btn_clear = Button(btnframe[0], text="C", command=lambda : clear("c"), font=("Verdana", 22,'bold'), relief=GROOVE, border=0,background="#e63946", fg="#fff")
-btn_clear.pack(side=LEFT, expand=True, fill="both",ipadx=3)
-btn_back = Button(btnframe[0], text="\u2b05", command=lambda : clear("b"), font=("Verdana", 22,'bold'), relief=GROOVE, border=0,background="#f48c06", fg="#fff")
+
+def theme():
+    extra_num = [btn_zero, btn_dot]
+    extra_opt = [btn_sqr, btn_div, btn_multi, btn_plus, btn_minus]
+    for i in numbtns:
+        i.configure(background=color[thm.get()][2], fg=color[thm.get()][0])
+    for i in extra_num:
+        i.configure(background=color[thm.get()][2], fg=color[thm.get()][0])
+    for i in extra_opt:
+        i.configure(background=color[thm.get()][6], fg=color[thm.get()][1])
+    btn_clear.configure(background=color[thm.get()][3], fg=color[thm.get()][1])
+    btn_back.configure(background=color[thm.get()][4], fg=color[thm.get()][1])
+    btn_equal.configure(background=color[thm.get()][5], fg=color[thm.get()][1])
+    en.configure(background=color[thm.get()][7], fg=color[thm.get()][8])
+
+
+btn_clear = Button(btnframe[0], text="C", command=lambda: clear("c"), font=("Verdana", 22, 'bold'), relief=GROOVE,
+                   border=0, background=color[thm.get()][3], fg=color[thm.get()][1])
+btn_clear.pack(side=LEFT, expand=True, fill="both", ipadx=3)
+btn_back = Button(btnframe[0], text="\u2b05", command=lambda: clear("b"), font=("Verdana", 22, 'bold'), relief=GROOVE,
+                  border=0, background=color[thm.get()][4], fg=color[thm.get()][1])
 btn_back.pack(side=LEFT, expand=True, fill="both")
-btn_sqr = Button(btnframe[0], text="x\u00b2", command=lambda: show("**2"), font=("Verdana", 22,'bold'), relief=GROOVE, border=0,background="#2a9d8f", fg="#fff")
-btn_sqr.pack(side=LEFT, expand=True, fill="both",ipadx=2)
-btn_div = Button(btnframe[0], text="/", command=lambda: show("/"), font=("Verdana", 22,'bold'), relief=GROOVE, border=0,background="#2a9d8f", fg="#fff")
-btn_div.pack(side=LEFT, expand=True, fill="both",ipadx=3)
-btn_multi = Button(btnframe[1], text="x", command=lambda: show("*"), font=("Verdana", 22,'bold'), relief=GROOVE, border=0,background="#2a9d8f", fg="#fff")
-btn_multi.pack(side=LEFT, expand=True, fill="both",ipadx=3)
-btn_minus = Button(btnframe[2], text="-", command=lambda: show("-"), font=("Verdana", 25,'bold'), relief=GROOVE, border=0,background="#2a9d8f", fg="#fff")
-btn_minus.pack(side=LEFT, expand=True, fill="both",ipadx=2)
-btn_plus = Button(btnframe[3], text="+", command=lambda: show("+"), font=("Verdana", 22,'bold'), relief=GROOVE, border=0,background="#2a9d8f", fg="#fff")
+btn_sqr = Button(btnframe[0], text="x\u00b2", command=lambda: show("**2"), font=("Verdana", 22, 'bold'), relief=GROOVE,
+                 border=0, background=color[thm.get()][6], fg=color[thm.get()][1])
+btn_sqr.pack(side=LEFT, expand=True, fill="both", ipadx=2)
+btn_div = Button(btnframe[0], text="/", command=lambda: show("/"), font=("Verdana", 22, 'bold'), relief=GROOVE,
+                 border=0, background=color[thm.get()][6], fg=color[thm.get()][1])
+btn_div.pack(side=LEFT, expand=True, fill="both", ipadx=3)
+btn_multi = Button(btnframe[1], text="x", command=lambda: show("*"), font=("Verdana", 22, 'bold'), relief=GROOVE,
+                   border=0, background=color[thm.get()][6], fg=color[thm.get()][1])
+btn_multi.pack(side=LEFT, expand=True, fill="both", ipadx=3)
+btn_minus = Button(btnframe[2], text="-", command=lambda: show("-"), font=("Verdana", 25, 'bold'), relief=GROOVE,
+                   border=0, background=color[thm.get()][6], fg=color[thm.get()][1])
+btn_minus.pack(side=LEFT, expand=True, fill="both", ipadx=2)
+btn_plus = Button(btnframe[3], text="+", command=lambda: show("+"), font=("Verdana", 22, 'bold'), relief=GROOVE,
+                  border=0, background=color[thm.get()][6], fg=color[thm.get()][1])
 btn_plus.pack(side=LEFT, expand=True, fill="both")
 # btn_dzero = Button(btnframe[4], text="00", command=lambda: show("00"), font=("Verdana", 22), relief=GROOVE, border=0,background="#f1faee", fg="#000")
 # btn_dzero.pack(side=LEFT, expand=True, fill="both")
-btn_zero = Button(btnframe[4], text="0", command=lambda: show("0"), font=("Verdana", 22), relief=GROOVE, border=0,background="#f1faee", fg="#000")
+btn_zero = Button(btnframe[4], text="0", command=lambda: show("0"), font=("Verdana", 22), relief=GROOVE, border=0,
+                  background=color[thm.get()][2], fg=color[thm.get()][0])
 btn_zero.pack(side=LEFT, expand=True, fill="both")
-btn_dot = Button(btnframe[4], text=".", command=lambda: show("."), font=("Verdana", 22), relief=GROOVE, border=0,background="#f1faee", fg="#000")
-btn_dot.pack(side=LEFT, expand=True, fill="both",ipadx=2)
-btn_equal = Button(btnframe[4], text="=", command=operate, font=("Verdana", 22,'bold'), relief=GROOVE, border=0,background="#aacc00", fg="#fff")
-btn_equal.pack(side=LEFT, expand=True, fill="both",ipadx=36)
+btn_dot = Button(btnframe[4], text=".", command=lambda: show("."), font=("Verdana", 22), relief=GROOVE, border=0,
+                 background=color[thm.get()][2], fg=color[thm.get()][0])
+btn_dot.pack(side=LEFT, expand=True, fill="both", ipadx=2)
+btn_equal = Button(btnframe[4], text="=", command=operate, font=("Verdana", 22, 'bold'), relief=GROOVE, border=0,
+                   background=color[thm.get()][5], fg=color[thm.get()][1])
+btn_equal.pack(side=LEFT, expand=True, fill="both", ipadx=36)
 
-lab1 = Label(btnframe[5],text=("  Have A Nice Day"),background="#f1faee", fg="#505050",font=("Helvetica", 12,'bold'),anchor=W)
+style = ttk.Style()
+style.configure("TRadiobutton", background="#f1faee", fg="#505050",
+                font=("Helvetica", 12, 'bold'), highlightthickness='20')
+lab1 = Label(btnframe[5], text=("Themes"), background="#f1faee", fg="#505050",
+             font=("Helvetica", 12, 'bold'), anchor=CENTER)
 lab1.pack(side=LEFT, expand=True, fill="both")
-lab2 = Label(btnframe[5],text=('\u00A9 Jijo'),background="#f1faee", fg="#505050",font=("Helvetica", 12,'bold'),anchor=CENTER)
+rad1 = ttk.Radiobutton(btnframe[5], text="1", variable=thm, value=0, command=theme)
+rad1.pack(side=LEFT, expand=True, fill="both")
+rad2 = ttk.Radiobutton(btnframe[5], text="2", variable=thm, value=1, command=theme)
+rad2.pack(side=LEFT, expand=True, fill="both")
+rad3 = ttk.Radiobutton(btnframe[5], text="3", variable=thm, value=2, command=theme)
+rad3.pack(side=LEFT, expand=True, fill="both")
+rad4 = ttk.Radiobutton(btnframe[5], text="Dark", variable=thm, value=3, command=theme)
+rad4.pack(side=LEFT, expand=True, fill="both")
+lab2 = Label(btnframe[5], text=('\u00A9 Jijo'), background="#f1faee", fg="#505050", font=("Helvetica", 12, 'bold'),
+             anchor=E)
 lab2.pack(side=LEFT, expand=True, fill="both")
+
 calc.mainloop()
