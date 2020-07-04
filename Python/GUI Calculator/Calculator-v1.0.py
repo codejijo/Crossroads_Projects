@@ -1,7 +1,7 @@
-#Thank you for viewing this code.
-#A huge round of applause to Crossroads team for all those efforts.
+# Thank you for viewing this code.
+# A huge round of applause to Crossroads team for all those efforts.
 
-#Please check Calculator_beta to view the calculator in devolopment.
+# Please check Calculator_beta to view the calculator in devolopment.
 
 from tkinter import *
 import math
@@ -11,6 +11,7 @@ calc.geometry("300x480+450+100")
 # calc.minsize(300,480)
 calc.resizable(0, 0)
 calc.title("Calculator")
+calc.iconbitmap('./Icon/calc_icon1.ico')
 
 thm = IntVar()
 
@@ -47,7 +48,7 @@ history_entry = []
 def history():
     hist = Tk()
     hist.title("History")
-    hist.geometry("250x150+770+100")
+    hist.geometry("250x150+180+100")
     scrollbar = Scrollbar(hist)
     scrollbar.pack(side=RIGHT, fill=Y)
 
@@ -55,7 +56,6 @@ def history():
     listbox.pack(fill=BOTH)
 
     for i in history_entry:
-        print(i)
         listbox.insert(END, i)
 
     listbox.config(yscrollcommand=scrollbar.set)
@@ -150,7 +150,6 @@ btn_equal = Button(btnframe[4], text="=", command=operate, font=("Verdana", 22, 
                    background=color[thm.get()][5], fg=color[thm.get()][1])
 btn_equal.pack(side=LEFT, expand=True, fill="both", ipadx=36)
 
-
 menubar = Menu(calc)
 
 filemenu = Menu(menubar, tearoff=0)
@@ -164,14 +163,14 @@ filemenu.add_separator()
 filemenu.add_command(label="Exit", command=calc.quit)
 menubar.add_cascade(label="File", menu=filemenu)
 
-editmenu = Menu(menubar, tearoff=0)
+thememenu = Menu(menubar, tearoff=0)
 
-editmenu.add_radiobutton(label="Default", variable=thm, value=0, command=theme)
-editmenu.add_radiobutton(label="light", variable=thm, value=1, command=theme)
-editmenu.add_radiobutton(label="Minimal", variable=thm, value=2, command=theme)
-editmenu.add_radiobutton(label="Dark", variable=thm, value=3, command=theme)
+thememenu.add_radiobutton(label="Default", variable=thm, value=0, command=theme)
+thememenu.add_radiobutton(label="light", variable=thm, value=1, command=theme)
+thememenu.add_radiobutton(label="Minimal", variable=thm, value=2, command=theme)
+thememenu.add_radiobutton(label="Dark", variable=thm, value=3, command=theme)
 
-menubar.add_cascade(label="Themes", menu=editmenu)
+menubar.add_cascade(label="Themes", menu=thememenu)
 
 historymenu = Menu(menubar, tearoff=0)
 historymenu.add_command(label="Show history", command=history)
@@ -180,5 +179,5 @@ menubar.add_cascade(label="History", menu=historymenu)
 calc.config(menu=menubar)
 calc.mainloop()
 
-#contact : +919544151856
-#email : jijojohnlikeu@gmail.com
+# contact : +919544151856
+# email : jijojohnlikeu@gmail.com

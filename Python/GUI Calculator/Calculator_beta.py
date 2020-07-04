@@ -7,6 +7,7 @@ calc.geometry("300x480+450+100")
 calc.minsize(300,480)
 # calc.resizable(0, 0)
 calc.title("Calculator")
+calc.iconbitmap('./Icon/calc_icon1.ico')
 
 thm = IntVar()
 
@@ -45,15 +46,18 @@ def history():
     hist = Tk()
     hist.title("History")
     hist.geometry("250x150+770+100")
+    hist.minsize(250, 150)
     scrollbar = Scrollbar(hist)
     scrollbar.pack(side=RIGHT, fill=Y)
 
     listbox = Listbox(hist, font=("Helvetica", 18, 'normal'))
     listbox.pack(fill=BOTH)
 
+    if history_entry == []:
+        listbox.insert(END, "Nill")
     for i in history_entry:
         print(i)
-        listbox.insert(END, i)
+        listbox.insert(END, " "+i)
 
     listbox.config(yscrollcommand=scrollbar.set)
     scrollbar.config(command=listbox.yview)
@@ -124,15 +128,15 @@ btn_clear.pack(side=LEFT, expand=True, fill="both", ipadx=3)
 btn_back = Button(btnframe[0], text="\u2b05", command=lambda: clear("b"), font=("Verdana", 22, 'bold'), relief=GROOVE,
                   border=0, background=color[thm.get()][4], fg=color[thm.get()][1])
 btn_back.pack(side=LEFT, expand=True, fill="both")
-btn_sqr = Button(btnframe[0], text="x\u00b2", command=lambda: show("**2"), font=("Verdana", 22, 'bold'), relief=GROOVE,
+btn_sqr = Button(btnframe[0], text="x\u207f", command=lambda: show("**"), font=("Verdana", 22, 'bold'), relief=GROOVE,
                  border=0, background=color[thm.get()][6], fg=color[thm.get()][1])
 btn_sqr.pack(side=LEFT, expand=True, fill="both", ipadx=2)
 btn_div = Button(btnframe[0], text="/", command=lambda: show("/"), font=("Verdana", 22, 'bold'), relief=GROOVE,
                  border=0, background=color[thm.get()][6], fg=color[thm.get()][1])
 btn_div.pack(side=LEFT, expand=True, fill="both", ipadx=3)
-btn_multi = Button(btnframe[1], text="x", command=lambda: show("*"), font=("Verdana", 22, 'bold'), relief=GROOVE,
+btn_multi = Button(btnframe[1], text="*", command=lambda: show("*"), font=("Verdana", 23, 'bold'), relief=GROOVE,
                    border=0, background=color[thm.get()][6], fg=color[thm.get()][1])
-btn_multi.pack(side=LEFT, expand=True, fill="both", ipadx=3)
+btn_multi.pack(side=LEFT, expand=True, fill="both", ipadx=0)
 btn_minus = Button(btnframe[2], text="-", command=lambda: show("-"), font=("Verdana", 25, 'bold'), relief=GROOVE,
                    border=0, background=color[thm.get()][6], fg=color[thm.get()][1])
 btn_minus.pack(side=LEFT, expand=True, fill="both", ipadx=2)
@@ -183,14 +187,14 @@ filemenu.add_separator()
 filemenu.add_command(label="Exit", command=calc.quit)
 menubar.add_cascade(label="File", menu=filemenu)
 
-editmenu = Menu(menubar, tearoff=0)
+thememenu = Menu(menubar, tearoff=0)
 
-editmenu.add_radiobutton(label="Default", variable=thm, value=0, command=theme)
-editmenu.add_radiobutton(label="light", variable=thm, value=1, command=theme)
-editmenu.add_radiobutton(label="Minimal", variable=thm, value=2, command=theme)
-editmenu.add_radiobutton(label="Dark", variable=thm, value=3, command=theme)
+thememenu.add_radiobutton(label="Default", variable=thm, value=0, command=theme)
+thememenu.add_radiobutton(label="light", variable=thm, value=1, command=theme)
+thememenu.add_radiobutton(label="Minimal", variable=thm, value=2, command=theme)
+thememenu.add_radiobutton(label="Dark", variable=thm, value=3, command=theme)
 
-menubar.add_cascade(label="Themes", menu=editmenu)
+menubar.add_cascade(label="Themes", menu=thememenu)
 
 historymenu = Menu(menubar, tearoff=0)
 historymenu.add_command(label="Show history", command=history)

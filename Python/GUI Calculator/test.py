@@ -42,17 +42,37 @@
 # print(math.ceil(a / 3))
 # li = [1,2,3,4,5]
 # print('x\u00b2')
+
+# from math import *
+#
+# print(degrees(asin(1)))  # inverse
+# print(sin(radians(90)))  # normal
+# print(factorial(3))
+# i = 5
+# j = f"print(factorial({i}))"
+# k = "10(2+2)"
+# exec(j)
+# if k.split("(")[0][-1:].isnumeric():
+#     temp = k.split("(")[0]+"*("+k.split("(")[1]
+#     k = temp
+# print(eval(k))
+
+
 from tkinter import *
 from tkinter import colorchooser
 from tkinter import ttk
+from math import *
 
 root = Tk()
+root.geometry("124x160")
+root.resizable(0, 0)
 a = IntVar()
 c1 = IntVar()
 c2 = IntVar()
 color = (["#000", "#fff"], ["#fff", "#000"], [])
 fr = Frame(root)
 fr.pack()
+
 
 
 def theme():
@@ -67,15 +87,22 @@ def custom():
         color[2].insert(1, temp2[1])
         theme()
 
+
 def destroy():
-    for widget in fr1.winfo_children():
-        widget.pack_forget()
+    # for widget in fr1.winfo_children():
+    #     widget.pack_forget()
+    for i in li:
+        i.pack_forget()
     root.geometry("124x160")
 
+
 def refresh():
-    for widget in fr1.winfo_children():
-        widget.pack()
-    root.geometry("100x300")
+    # for widget in fr.winfo_children():
+    #     widget.pack()
+    for i in li:
+        i.pack(fill=BOTH, expand=True)
+    root.geometry("124x230")
+
 
 rd1 = ttk.Radiobutton(fr, text="Yes", variable=a, value=0, command=theme).pack()
 rd2 = ttk.Radiobutton(fr, text="No", variable=a, value=1, command=theme).pack()
@@ -83,12 +110,17 @@ rd3 = Radiobutton(fr, text="Custom", variable=a, value=2, command=custom).pack()
 en1 = Entry(fr).pack()
 lab = Label(fr, text="Hello world", background=color[a.get()][0], fg=color[a.get()][1])
 lab.pack()
-bt1 = Button(fr,command=destroy,text = "Delete").pack()
-bt2 = Button(fr,command=refresh,text = "Refresh").pack()
+bt1 = Button(fr, command=destroy, text="Delete").pack()
+bt2 = Button(fr, command=refresh, text="Refresh").pack()
 
 fr1 = Frame(root)
 fr1.pack()
-bt3 = Button(fr1,command=destroy,text = "sample1",name="bt3")
-bt4 = Button(fr1,command=refresh,text = "sample2",name="bt4")
+bt3 = ttk.Button(fr, command=destroy, text="sample1", name="bt3")
+bt4 = ttk.Button(fr, command=refresh, text="sample2", name="bt4")
+ch4 = ttk.Checkbutton(fr, text="Demo", variable=c1, offvalue=0, onvalue=1)
+li = [bt3, bt4, ch4]
+
+print(degrees(asin(1)))
+print(sin(radians(90)))
 
 root.mainloop()
