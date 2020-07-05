@@ -4,12 +4,14 @@ from tkinter import ttk
 
 calc = Tk()
 calc.geometry("300x480+450+100")
-calc.minsize(300,480)
+calc.minsize(300, 480)
 # calc.resizable(0, 0)
 calc.title("Calculator")
 calc.iconbitmap('./Icon/calc_icon1.ico')
 
-thm = IntVar()
+theme_var = IntVar()
+view_var = IntVar()
+inv_var = IntVar()
 
 
 def show(a):
@@ -57,7 +59,7 @@ def history():
         listbox.insert(END, "Nill")
     for i in history_entry:
         print(i)
-        listbox.insert(END, " "+i)
+        listbox.insert(END, " " + i)
 
     listbox.config(yscrollcommand=scrollbar.set)
     scrollbar.config(command=listbox.yview)
@@ -79,26 +81,34 @@ def hoverin(a):
 
 def hoverout(a):
     # print("poyi")
-    numbtns[int(a.widget["text"]) - 1].configure(background=color[thm.get()][2], fg=color[thm.get()][0])
+    numbtns[int(a.widget["text"]) - 1].configure(background=color[theme_var.get()][2], fg=color[theme_var.get()][0])
 
 
 entry_frame = Frame(calc)
 entry_frame.pack(expand=True, fill="both", ipady=12)
 
-en_top = Entry(entry_frame, font=("Helvetica", 16, 'normal'), background=color[thm.get()][7], fg=color[thm.get()][8],
+en_top = Entry(entry_frame, font=("Helvetica", 16, 'normal'),
+               background=color[theme_var.get()][7],
+               fg=color[theme_var.get()][8],
                border=0, justify=RIGHT)
 en_top.pack(expand=True, fill="both")
-en = Entry(entry_frame, font=("Helvetica", 25, 'bold'), background=color[thm.get()][7], fg=color[thm.get()][8],
+en = Entry(entry_frame, font=("Helvetica", 25, 'bold'),
+           background=color[theme_var.get()][7],
+           fg=color[theme_var.get()][8],
            border=0, justify=RIGHT)
 en.pack(expand=True, fill="both", ipady=12)
+
+scienframe = [Frame(entry_frame,background=color[theme_var.get()][7]) for i in range(3)]
 
 btnframe = [Frame(calc) for i in range(5)]
 for i in btnframe:
     i.pack(expand=True, fill="both")
 
-numbtns = [Button(btnframe[4 - math.ceil(i / 3)], text=str(i), font=("Verdana", 22),
-                  relief=GROOVE, border=0, background=color[thm.get()][2], fg=color[thm.get()][0]) for i in
-           range(1, 10)]
+numbtns = [Button(btnframe[4 - math.ceil(i / 3)],
+                  text=str(i), font=("Verdana", 22),
+                  relief=GROOVE, border=0,
+                  background=color[theme_var.get()][2],
+                  fg=color[theme_var.get()][0]) for i in range(1, 10)]
 for i in numbtns:
     i.pack(side=LEFT, expand=True, fill="both")
     i.bind('<Button-1>', show)
@@ -110,50 +120,171 @@ def theme():
     extra_num = [btn_zero, btn_dot]
     extra_opt = [btn_sqr, btn_div, btn_multi, btn_plus, btn_minus]
     for i in numbtns:
-        i.configure(background=color[thm.get()][2], fg=color[thm.get()][0])
+        i.configure(background=color[theme_var.get()][2],
+                    fg=color[theme_var.get()][0])
     for i in extra_num:
-        i.configure(background=color[thm.get()][2], fg=color[thm.get()][0])
+        i.configure(background=color[theme_var.get()][2],
+                    fg=color[theme_var.get()][0])
     for i in extra_opt:
-        i.configure(background=color[thm.get()][6], fg=color[thm.get()][1])
-    btn_clear.configure(background=color[thm.get()][3], fg=color[thm.get()][1])
-    btn_back.configure(background=color[thm.get()][4], fg=color[thm.get()][1])
-    btn_equal.configure(background=color[thm.get()][5], fg=color[thm.get()][1])
-    en.configure(background=color[thm.get()][7], fg=color[thm.get()][8])
-    en_top.configure(background=color[thm.get()][7], fg=color[thm.get()][8])
+        i.configure(background=color[theme_var.get()][6],
+                    fg=color[theme_var.get()][1])
+    btn_clear.configure(background=color[theme_var.get()][3],
+                        fg=color[theme_var.get()][1])
+    btn_back.configure(background=color[theme_var.get()][4],
+                       fg=color[theme_var.get()][1])
+    btn_equal.configure(background=color[theme_var.get()][5],
+                        fg=color[theme_var.get()][1])
+    en.configure(background=color[theme_var.get()][7],
+                 fg=color[theme_var.get()][8])
+    en_top.configure(background=color[theme_var.get()][7],
+                     fg=color[theme_var.get()][8])
 
 
-btn_clear = Button(btnframe[0], text="C", command=lambda: clear("c"), font=("Verdana", 22, 'bold'), relief=GROOVE,
-                   border=0, background=color[thm.get()][3], fg=color[thm.get()][1])
+def scientific():
+    calc.geometry("300x520+450+100")
+    for i in scienframe:
+        i.pack(expand=True, fill="both")
+    for i in sci_list:
+        i.pack(side=LEFT, expand=True, fill="both")
+
+
+def standard():
+    for i in sci_list:
+        i.pack_forget()
+    for i in scienframe:
+        i.pack_forget()
+    calc.geometry("300x480+450+100")
+
+
+count = True
+
+
+def inverse():
+    global count
+    count = not count
+    if count:
+        sci_inv.configure(background=color[theme_var.get()][6], fg=color[theme_var.get()][1])
+    elif not count:
+        sci_inv.configure(background="#f48c06", fg="#fff")
+
+
+btn_clear = Button(btnframe[0], text="C", command=lambda: clear("c"),
+                   font=("Verdana", 22, 'bold'), relief=GROOVE,
+                   border=0, background=color[theme_var.get()][3],
+                   fg=color[theme_var.get()][1])
 btn_clear.pack(side=LEFT, expand=True, fill="both", ipadx=3)
-btn_back = Button(btnframe[0], text="\u2b05", command=lambda: clear("b"), font=("Verdana", 22, 'bold'), relief=GROOVE,
-                  border=0, background=color[thm.get()][4], fg=color[thm.get()][1])
+btn_back = Button(btnframe[0], text="\u2b05", command=lambda: clear("b"),
+                  font=("Verdana", 22, 'bold'), relief=GROOVE,
+                  border=0, background=color[theme_var.get()][4],
+                  fg=color[theme_var.get()][1])
 btn_back.pack(side=LEFT, expand=True, fill="both")
-btn_sqr = Button(btnframe[0], text="x\u207f", command=lambda: show("**"), font=("Verdana", 22, 'bold'), relief=GROOVE,
-                 border=0, background=color[thm.get()][6], fg=color[thm.get()][1])
+btn_sqr = Button(btnframe[0], text="x\u207f", command=lambda: show("**"),
+                 font=("Verdana", 22, 'bold'), relief=GROOVE,
+                 border=0, background=color[theme_var.get()][6],
+                 fg=color[theme_var.get()][1])
 btn_sqr.pack(side=LEFT, expand=True, fill="both", ipadx=2)
-btn_div = Button(btnframe[0], text="/", command=lambda: show("/"), font=("Verdana", 22, 'bold'), relief=GROOVE,
-                 border=0, background=color[thm.get()][6], fg=color[thm.get()][1])
+btn_div = Button(btnframe[0], text="/", command=lambda: show("/"),
+                 font=("Verdana", 22, 'bold'), relief=GROOVE,
+                 border=0, background=color[theme_var.get()][6],
+                 fg=color[theme_var.get()][1])
 btn_div.pack(side=LEFT, expand=True, fill="both", ipadx=3)
-btn_multi = Button(btnframe[1], text="*", command=lambda: show("*"), font=("Verdana", 23, 'bold'), relief=GROOVE,
-                   border=0, background=color[thm.get()][6], fg=color[thm.get()][1])
+btn_multi = Button(btnframe[1], text="*", command=lambda: show("*"),
+                   font=("Verdana", 23, 'bold'), relief=GROOVE,
+                   border=0, background=color[theme_var.get()][6],
+                   fg=color[theme_var.get()][1])
 btn_multi.pack(side=LEFT, expand=True, fill="both", ipadx=0)
-btn_minus = Button(btnframe[2], text="-", command=lambda: show("-"), font=("Verdana", 25, 'bold'), relief=GROOVE,
-                   border=0, background=color[thm.get()][6], fg=color[thm.get()][1])
+btn_minus = Button(btnframe[2], text="-", command=lambda: show("-"),
+                   font=("Verdana", 25, 'bold'), relief=GROOVE,
+                   border=0, background=color[theme_var.get()][6],
+                   fg=color[theme_var.get()][1])
 btn_minus.pack(side=LEFT, expand=True, fill="both", ipadx=2)
-btn_plus = Button(btnframe[3], text="+", command=lambda: show("+"), font=("Verdana", 22, 'bold'), relief=GROOVE,
-                  border=0, background=color[thm.get()][6], fg=color[thm.get()][1])
+btn_plus = Button(btnframe[3], text="+", command=lambda: show("+"),
+                  font=("Verdana", 22, 'bold'), relief=GROOVE,
+                  border=0, background=color[theme_var.get()][6],
+                  fg=color[theme_var.get()][1])
 btn_plus.pack(side=LEFT, expand=True, fill="both")
 # btn_dzero = Button(btnframe[4], text="00", command=lambda: show("00"), font=("Verdana", 22), relief=GROOVE, border=0,background="#f1faee", fg="#000")
 # btn_dzero.pack(side=LEFT, expand=True, fill="both")
-btn_zero = Button(btnframe[4], text="0", command=lambda: show("0"), font=("Verdana", 22), relief=GROOVE, border=0,
-                  background=color[thm.get()][2], fg=color[thm.get()][0])
+btn_zero = Button(btnframe[4], text="0", command=lambda: show("0"),
+                  font=("Verdana", 22), relief=GROOVE, border=0,
+                  background=color[theme_var.get()][2],
+                  fg=color[theme_var.get()][0])
 btn_zero.pack(side=LEFT, expand=True, fill="both")
-btn_dot = Button(btnframe[4], text=".", command=lambda: show("."), font=("Verdana", 22), relief=GROOVE, border=0,
-                 background=color[thm.get()][2], fg=color[thm.get()][0])
+btn_dot = Button(btnframe[4], text=".", command=lambda: show("."),
+                 font=("Verdana", 22), relief=GROOVE, border=0,
+                 background=color[theme_var.get()][2],
+                 fg=color[theme_var.get()][0])
 btn_dot.pack(side=LEFT, expand=True, fill="both", ipadx=2)
-btn_equal = Button(btnframe[4], text="=", command=operate, font=("Verdana", 22, 'bold'), relief=GROOVE, border=0,
-                   background=color[thm.get()][5], fg=color[thm.get()][1])
+btn_equal = Button(btnframe[4], text="=", command=operate,
+                   font=("Verdana", 22, 'bold'), relief=GROOVE, border=0,
+                   background=color[theme_var.get()][5],
+                   fg=color[theme_var.get()][1])
 btn_equal.pack(side=LEFT, expand=True, fill="both", ipadx=36)
+
+# Scientific Buttons
+sci_br1 = Button(scienframe[0], text="(", command=lambda: show("+"),
+                 font=("Verdana", 14), relief=GROOVE,
+                 border=0, background=color[theme_var.get()][6],
+                 fg=color[theme_var.get()][1])
+sci_br2 = Button(scienframe[0], text=")", command=lambda: show("+"),
+                 font=("Verdana", 14), relief=GROOVE,
+                 border=0, background=color[theme_var.get()][6],
+                 fg=color[theme_var.get()][1])
+sci_prcnt = Button(scienframe[0], text="%", command=lambda: show("+"),
+                   font=("Verdana", 14), relief=GROOVE,
+                   border=0, background=color[theme_var.get()][6],
+                   fg=color[theme_var.get()][1])
+sci_fact = Button(scienframe[0], text="n!", command=lambda: show("+"),
+                  font=("Verdana", 14), relief=GROOVE,
+                  border=0, background=color[theme_var.get()][6],
+                  fg=color[theme_var.get()][1])
+sci_inv = Button(scienframe[0], text="Inv", command=inverse,
+                 font=("Verdana", 14), relief=GROOVE, border=0,
+                 background=color[theme_var.get()][6],
+                 fg=color[theme_var.get()][1])
+sci_sin = Button(scienframe[1], text="sin", command=lambda: show("+"),
+                 font=("Verdana", 14), relief=GROOVE,
+                 border=0, background=color[theme_var.get()][6],
+                 fg=color[theme_var.get()][1])
+sci_cos = Button(scienframe[1], text="cos", command=lambda: show("+"),
+                 font=("Verdana", 14), relief=GROOVE,
+                 border=0, background=color[theme_var.get()][6],
+                 fg=color[theme_var.get()][1])
+sci_tan = Button(scienframe[1], text="tan", command=lambda: show("+"),
+                 font=("Verdana", 14), relief=GROOVE,
+                 border=0, background=color[theme_var.get()][6],
+                 fg=color[theme_var.get()][1])
+sci_ln = Button(scienframe[1], text="ln", command=lambda: show("+"),
+                font=("Verdana", 14), relief=GROOVE,
+                border=0, background=color[theme_var.get()][6],
+                fg=color[theme_var.get()][1])
+sci_pi = Button(scienframe[1], text="\u03C0", command=lambda: show("+"),
+                font=("Verdana", 14), relief=GROOVE,
+                border=0, background=color[theme_var.get()][6],
+                fg=color[theme_var.get()][1])
+sci_sinh = Button(scienframe[2], text="sinh", command=lambda: show("+"),
+                  font=("Verdana", 14), relief=GROOVE,
+                  border=0, background=color[theme_var.get()][6],
+                  fg=color[theme_var.get()][1])
+sci_cosh = Button(scienframe[2], text="cosh", command=lambda: show("+"),
+                  font=("Verdana", 14), relief=GROOVE,
+                  border=0, background=color[theme_var.get()][6],
+                  fg=color[theme_var.get()][1])
+sci_tanh = Button(scienframe[2], text="tanh", command=lambda: show("+"),
+                  font=("Verdana", 14), relief=GROOVE,
+                  border=0, background=color[theme_var.get()][6],
+                  fg=color[theme_var.get()][1])
+sci_log = Button(scienframe[2], text="log", command=lambda: show("+"),
+                 font=("Verdana", 14), relief=GROOVE,
+                 border=0, background=color[theme_var.get()][6],
+                 fg=color[theme_var.get()][1])
+sci_root = Button(scienframe[2], text="\u221A", command=lambda: show("+"),
+                  font=("Verdana", 14), relief=GROOVE,
+                  border=0, background=color[theme_var.get()][6],
+                  fg=color[theme_var.get()][1])
+sci_list = [sci_br1, sci_br2,sci_prcnt, sci_fact, sci_inv,
+            sci_sin, sci_cos, sci_tan, sci_ln, sci_pi, 
+            sci_sinh, sci_cosh, sci_tanh, sci_log, sci_root]
 
 # style = ttk.Style()
 # style.configure("TRadiobutton", background="#f1faee", fg="#505050",
@@ -162,13 +293,13 @@ btn_equal.pack(side=LEFT, expand=True, fill="both", ipadx=36)
 # lab1 = Label(btnframe[5], text=("Themes"), background="#f1faee", fg="#505050",
 #              font=("Helvetica", 12), anchor=NW)
 # lab1.pack(side=LEFT, expand=True, fill="both")
-# rad1 = ttk.Radiobutton(btnframe[5], text="1", variable=thm, value=0, command=theme)
+# rad1 = ttk.Radiobutton(btnframe[5], text="1", variable=theme_var, value=0, command=theme)
 # rad1.pack(side=LEFT, expand=True, fill="both")
-# rad2 = ttk.Radiobutton(btnframe[5], text="2", variable=thm, value=1, command=theme)
+# rad2 = ttk.Radiobutton(btnframe[5], text="2", variable=theme_var, value=1, command=theme)
 # rad2.pack(side=LEFT, expand=True, fill="both")
-# rad3 = ttk.Radiobutton(btnframe[5], text="3", variable=thm, value=2, command=theme)
+# rad3 = ttk.Radiobutton(btnframe[5], text="3", variable=theme_var, value=2, command=theme)
 # rad3.pack(side=LEFT, expand=True, fill="both")
-# rad4 = ttk.Radiobutton(btnframe[5], text="Dark", variable=thm, value=3, command=theme)
+# rad4 = ttk.Radiobutton(btnframe[5], text="Dark", variable=theme_var, value=3, command=theme)
 # rad4.pack(side=LEFT, expand=True, fill="both")
 # lab2 = Label(btnframe[5], text=('\u00A9 Jijo'), background="#f1faee", fg="#505050", font=("Helvetica", 12, 'bold'),
 #              anchor=E)
@@ -176,23 +307,21 @@ btn_equal.pack(side=LEFT, expand=True, fill="both", ipadx=36)
 
 menubar = Menu(calc)
 
-filemenu = Menu(menubar, tearoff=0)
-filemenu.add_command(label="New")
-filemenu.add_command(label="Open")
-filemenu.add_command(label="Save")
-filemenu.add_command(label="Save as...")
+viewmenu = Menu(menubar, tearoff=0)
+viewmenu.add_radiobutton(label="Standard", variable=view_var, value=0, command=standard)
+viewmenu.add_radiobutton(label="Scientific", variable=view_var, value=1, command=scientific)
 
-filemenu.add_separator()
+viewmenu.add_separator()
 
-filemenu.add_command(label="Exit", command=calc.quit)
-menubar.add_cascade(label="File", menu=filemenu)
+viewmenu.add_command(label="Exit", command=calc.quit)
+menubar.add_cascade(label="View", menu=viewmenu)
 
 thememenu = Menu(menubar, tearoff=0)
 
-thememenu.add_radiobutton(label="Default", variable=thm, value=0, command=theme)
-thememenu.add_radiobutton(label="light", variable=thm, value=1, command=theme)
-thememenu.add_radiobutton(label="Minimal", variable=thm, value=2, command=theme)
-thememenu.add_radiobutton(label="Dark", variable=thm, value=3, command=theme)
+thememenu.add_radiobutton(label="Default", variable=theme_var, value=0, command=theme)
+thememenu.add_radiobutton(label="light", variable=theme_var, value=1, command=theme)
+thememenu.add_radiobutton(label="Minimal", variable=theme_var, value=2, command=theme)
+thememenu.add_radiobutton(label="Dark", variable=theme_var, value=3, command=theme)
 
 menubar.add_cascade(label="Themes", menu=thememenu)
 
