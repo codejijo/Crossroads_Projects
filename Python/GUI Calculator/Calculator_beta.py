@@ -1,5 +1,5 @@
 from tkinter import *
-import math
+from math import *
 from tkinter import ttk
 
 calc = Tk()
@@ -35,10 +35,72 @@ def clear(a):
 def operate():
     value = en.get()
     en_top.delete(0, END)
-    en_top.insert(END, str(value))
     en.delete(0, END)
+    if "(" in value:
+        if value.split("(")[0][-1:].isnumeric():
+            temp = value.split("(")[0] + "*(" + value.split("(")[1]
+            value = temp
+
+    en_top.insert(END, str(value))
     en.insert(END, eval(str(value)))
     history_entry.append(str(value) + " = " + str(eval(str(value))))
+
+
+def sci_operate(a):
+    if isinstance(a, str):
+        op = a
+    else:
+        op = a.widget["text"]
+
+    if en.get() == "" and op != "\u03C0":
+        en_top.delete(0, END)
+        en_top.insert(END,"Enter value,then calculate")
+    else:
+        en_top.delete(0,END)
+        value = en.get()
+
+    if op == "%" or op == "!":
+        en_top.insert(END,value+op)
+    elif op == "\u221A":
+        en_top.insert(END,op+value)
+    elif op == "\u03C0":
+        en_top.insert(END, op)
+    else:
+        en_top.insert(END, op + "("+value+")")
+
+    en.delete(0, END)
+    if op == "sin":
+        en.insert(END,ceil(sin(radians(int(value)))))
+    elif op == "cos":
+        en.insert(END,ceil(cos(radians(int(value)))))
+    elif op == "tan":
+        en.insert(END,ceil(tan(radians(int(value)))))
+    elif op == "sinh":
+        en.insert(END,ceil(sinh(radians(int(value)))))
+    elif op == "cosh":
+        en.insert(END,ceil(cosh(radians(int(value)))))
+    elif op == "tanh":
+        en.insert(END,ceil(tanh(radians(int(value)))))
+    elif op == "sin\u207b\u00B9":
+        en.insert(END,ceil(degrees(asin(int(value)))))
+    elif op == "cos\u207b\u00B9":
+        en.insert(END,ceil(degrees(acos(int(value)))))
+    elif op == "tan\u207b\u00B9":
+        en.insert(END,ceil(degrees(atan(int(value)))))
+    elif op == "sinh\u207b\u00B9":
+        en.insert(END,ceil(degrees(asinh(int(value)))))
+    elif op == "cosh\u207b\u00B9":
+        en.insert(END,ceil(degrees(acosh(int(value)))))
+    elif op == "tanh\u207b\u00B9":
+        en.insert(END,ceil(degrees(atanh(int(value)))))
+    elif op == "%":
+        en.insert(END,eval(value+"/100"))
+    elif op == "!":
+        en.insert(END, factorial(int(value)))
+    elif op == "\u221A":
+        en.insert(END, sqrt(int(value)))
+    elif op == "\u03C0":
+        en.insert(END, pi)
 
 
 history_entry = []
@@ -98,13 +160,13 @@ en = Entry(entry_frame, font=("Helvetica", 25, 'bold'),
            border=0, justify=RIGHT)
 en.pack(expand=True, fill="both", ipady=12)
 
-scienframe = [Frame(entry_frame,background=color[theme_var.get()][7]) for i in range(3)]
+scienframe = [Frame(entry_frame, background=color[theme_var.get()][7]) for i in range(3)]
 
 btnframe = [Frame(calc) for i in range(5)]
 for i in btnframe:
     i.pack(expand=True, fill="both")
 
-numbtns = [Button(btnframe[4 - math.ceil(i / 3)],
+numbtns = [Button(btnframe[4 - ceil(i / 3)],
                   text=str(i), font=("Verdana", 22),
                   relief=GROOVE, border=0,
                   background=color[theme_var.get()][2],
@@ -145,6 +207,9 @@ def scientific():
     for i in scienframe:
         i.pack(expand=True, fill="both")
     for i in sci_list:
+        i.configure(font=("Verdana", 14), relief=GROOVE,
+                    border=0, background=color[theme_var.get()][6],
+                    fg=color[theme_var.get()][1])
         i.pack(side=LEFT, expand=True, fill="both")
 
 
@@ -164,8 +229,22 @@ def inverse():
     count = not count
     if count:
         sci_inv.configure(background=color[theme_var.get()][6], fg=color[theme_var.get()][1])
+        for i in sci_list[:6]:
+            temp = i.cget("text")
+            temp1 = temp.replace("\u207b\u00B9", "")
+            i.configure(text=temp1, command="")
+            i.bind('<Button-1>', sci_operate)
+        sci_list[6].configure(text="log", command=lambda: sci_operate("log"))
+        sci_list[7].configure(text="ln", command=lambda: sci_operate("ln"))
     elif not count:
         sci_inv.configure(background="#f48c06", fg="#fff")
+        for i in sci_list[:6]:
+            temp = i.cget("text")
+            temp1 = temp + "\u207b\u00B9"
+            i.configure(text=temp1, command="")
+            i.bind('<Button-1>', sci_operate)
+        sci_list[6].configure(text="10^", command=lambda: show("10**"))
+        sci_list[7].configure(text="e\u02e3", command=lambda: show("e**"))
 
 
 btn_clear = Button(btnframe[0], text="C", command=lambda: clear("c"),
@@ -222,70 +301,23 @@ btn_equal = Button(btnframe[4], text="=", command=operate,
 btn_equal.pack(side=LEFT, expand=True, fill="both", ipadx=36)
 
 # Scientific Buttons
-sci_br1 = Button(scienframe[0], text="(", command=lambda: show("+"),
-                 font=("Verdana", 14), relief=GROOVE,
-                 border=0, background=color[theme_var.get()][6],
-                 fg=color[theme_var.get()][1])
-sci_br2 = Button(scienframe[0], text=")", command=lambda: show("+"),
-                 font=("Verdana", 14), relief=GROOVE,
-                 border=0, background=color[theme_var.get()][6],
-                 fg=color[theme_var.get()][1])
-sci_prcnt = Button(scienframe[0], text="%", command=lambda: show("+"),
-                   font=("Verdana", 14), relief=GROOVE,
-                   border=0, background=color[theme_var.get()][6],
-                   fg=color[theme_var.get()][1])
-sci_fact = Button(scienframe[0], text="n!", command=lambda: show("+"),
-                  font=("Verdana", 14), relief=GROOVE,
-                  border=0, background=color[theme_var.get()][6],
-                  fg=color[theme_var.get()][1])
-sci_inv = Button(scienframe[0], text="Inv", command=inverse,
-                 font=("Verdana", 14), relief=GROOVE, border=0,
-                 background=color[theme_var.get()][6],
-                 fg=color[theme_var.get()][1])
-sci_sin = Button(scienframe[1], text="sin", command=lambda: show("+"),
-                 font=("Verdana", 14), relief=GROOVE,
-                 border=0, background=color[theme_var.get()][6],
-                 fg=color[theme_var.get()][1])
-sci_cos = Button(scienframe[1], text="cos", command=lambda: show("+"),
-                 font=("Verdana", 14), relief=GROOVE,
-                 border=0, background=color[theme_var.get()][6],
-                 fg=color[theme_var.get()][1])
-sci_tan = Button(scienframe[1], text="tan", command=lambda: show("+"),
-                 font=("Verdana", 14), relief=GROOVE,
-                 border=0, background=color[theme_var.get()][6],
-                 fg=color[theme_var.get()][1])
-sci_ln = Button(scienframe[1], text="ln", command=lambda: show("+"),
-                font=("Verdana", 14), relief=GROOVE,
-                border=0, background=color[theme_var.get()][6],
-                fg=color[theme_var.get()][1])
-sci_pi = Button(scienframe[1], text="\u03C0", command=lambda: show("+"),
-                font=("Verdana", 14), relief=GROOVE,
-                border=0, background=color[theme_var.get()][6],
-                fg=color[theme_var.get()][1])
-sci_sinh = Button(scienframe[2], text="sinh", command=lambda: show("+"),
-                  font=("Verdana", 14), relief=GROOVE,
-                  border=0, background=color[theme_var.get()][6],
-                  fg=color[theme_var.get()][1])
-sci_cosh = Button(scienframe[2], text="cosh", command=lambda: show("+"),
-                  font=("Verdana", 14), relief=GROOVE,
-                  border=0, background=color[theme_var.get()][6],
-                  fg=color[theme_var.get()][1])
-sci_tanh = Button(scienframe[2], text="tanh", command=lambda: show("+"),
-                  font=("Verdana", 14), relief=GROOVE,
-                  border=0, background=color[theme_var.get()][6],
-                  fg=color[theme_var.get()][1])
-sci_log = Button(scienframe[2], text="log", command=lambda: show("+"),
-                 font=("Verdana", 14), relief=GROOVE,
-                 border=0, background=color[theme_var.get()][6],
-                 fg=color[theme_var.get()][1])
-sci_root = Button(scienframe[2], text="\u221A", command=lambda: show("+"),
-                  font=("Verdana", 14), relief=GROOVE,
-                  border=0, background=color[theme_var.get()][6],
-                  fg=color[theme_var.get()][1])
-sci_list = [sci_br1, sci_br2,sci_prcnt, sci_fact, sci_inv,
-            sci_sin, sci_cos, sci_tan, sci_ln, sci_pi, 
-            sci_sinh, sci_cosh, sci_tanh, sci_log, sci_root]
-
+sci_br1 = Button(scienframe[0], text="  (  ", command=lambda: show("("))
+sci_br2 = Button(scienframe[0], text="  )  ", command=lambda: show(")"))
+sci_prcnt = Button(scienframe[0], text=" % ", command=lambda: sci_operate("%"))
+sci_fact = Button(scienframe[0], text="n!", command=lambda: sci_operate("!"))
+sci_inv = Button(scienframe[0], text="Inv", command=inverse)
+sci_sin = Button(scienframe[1], text="sin", command=lambda: sci_operate("sin"))
+sci_cos = Button(scienframe[1], text="cos", command=lambda: sci_operate("cos"))
+sci_tan = Button(scienframe[1], text="tan", command=lambda: sci_operate("tan"))
+sci_ln = Button(scienframe[1], text="ln", command=lambda: sci_operate("ln"))
+sci_pi = Button(scienframe[1], text="\u03C0", command=lambda: sci_operate("\u03C0"))
+sci_sinh = Button(scienframe[2], text="sinh", command=lambda: sci_operate("sinh"))
+sci_cosh = Button(scienframe[2], text="cosh", command=lambda: sci_operate("cosh"))
+sci_tanh = Button(scienframe[2], text="tanh", command=lambda: sci_operate("tanh"))
+sci_log = Button(scienframe[2], text="log", command=lambda: sci_operate("log"))
+sci_root = Button(scienframe[2], text="\u221A", command=lambda: sci_operate("\u221A"))
+sci_list = [sci_sin, sci_cos, sci_tan, sci_sinh, sci_cosh, sci_tanh,
+            sci_log, sci_ln, sci_br1, sci_br2, sci_prcnt, sci_fact, sci_pi, sci_root, sci_inv]
 # style = ttk.Style()
 # style.configure("TRadiobutton", background="#f1faee", fg="#505050",
 #                 font=("Helvetica", 12, 'bold'))

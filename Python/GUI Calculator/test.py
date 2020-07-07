@@ -95,13 +95,13 @@ def destroy():
         i.pack_forget()
     root.geometry("124x160")
 
-
+count = 0
 def refresh():
     # for widget in fr.winfo_children():
     #     widget.pack()
     for i in li:
         i.pack(fill=BOTH, expand=True)
-    root.geometry("124x230")
+    root.geometry("124x260")
 
 
 rd1 = ttk.Radiobutton(fr, text="Yes", variable=a, value=0, command=theme).pack()
@@ -117,10 +117,13 @@ fr1 = Frame(root)
 fr1.pack()
 bt3 = ttk.Button(fr, command=destroy, text="sample1", name="bt3")
 bt4 = ttk.Button(fr, command=refresh, text="sample2", name="bt4")
-ch4 = ttk.Checkbutton(fr, text="Demo", variable=c1, offvalue=0, onvalue=1)
-li = [bt3, bt4, ch4]
+ch4 = ttk.Checkbutton(fr, text="ttkDemo", variable=c1, offvalue=0, onvalue=1)
+ch5 = Checkbutton(fr, text="tkDemo", variable=c2, offvalue=0, onvalue=1)
+li = [bt3, bt4, ch4,ch5]
 
 print(degrees(asin(1)))
-print(sin(radians(90)))
+print(ceil(cos(radians(90))))
+print(ceil(tan(radians(45))))
 
 root.mainloop()
+
