@@ -47,6 +47,7 @@ def operate():
 
 
 def sci_operate(a):
+    value = ""
     if isinstance(a, str):
         op = a
     else:
@@ -54,53 +55,56 @@ def sci_operate(a):
 
     if en.get() == "" and op != "\u03C0":
         en_top.delete(0, END)
-        en_top.insert(END,"Enter value,then calculate")
+        en_top.insert(END, "Enter value,then calculate")
     else:
-        en_top.delete(0,END)
+        en_top.delete(0, END)
         value = en.get()
 
     if op == "%" or op == "!":
-        en_top.insert(END,value+op)
-    elif op == "\u221A":
-        en_top.insert(END,op+value)
+        en_top.insert(END, value + op)
+    elif op == "\u221A" and en.get() != "":
+        en_top.insert(END, op + value)
     elif op == "\u03C0":
         en_top.insert(END, op)
     else:
-        en_top.insert(END, op + "("+value+")")
+        if en.get() != "":
+            en_top.insert(END, op + "(" + value + ")")
 
     en.delete(0, END)
     if op == "sin":
-        en.insert(END,ceil(sin(radians(int(value)))))
+        en.insert(END, sin(radians(float(value))))
     elif op == "cos":
-        en.insert(END,ceil(cos(radians(int(value)))))
+        en.insert(END, round(cos(radians(float(value)))))
     elif op == "tan":
-        en.insert(END,ceil(tan(radians(int(value)))))
+        en.insert(END, tan(radians(float(value))))
     elif op == "sinh":
-        en.insert(END,ceil(sinh(radians(int(value)))))
+        en.insert(END, sinh(radians(float(value))))
     elif op == "cosh":
-        en.insert(END,ceil(cosh(radians(int(value)))))
+        en.insert(END, cosh(radians(float(value))))
     elif op == "tanh":
-        en.insert(END,ceil(tanh(radians(int(value)))))
+        en.insert(END, tanh(radians(float(value))))
     elif op == "sin\u207b\u00B9":
-        en.insert(END,ceil(degrees(asin(int(value)))))
+        en.insert(END, degrees(asin(float(value))))
     elif op == "cos\u207b\u00B9":
-        en.insert(END,ceil(degrees(acos(int(value)))))
+        en.insert(END, degrees(acos(float(value))))
     elif op == "tan\u207b\u00B9":
-        en.insert(END,ceil(degrees(atan(int(value)))))
+        en.insert(END, degrees(atan(float(value))))
     elif op == "sinh\u207b\u00B9":
-        en.insert(END,ceil(degrees(asinh(int(value)))))
+        en.insert(END, degrees(asinh(float(value))))
     elif op == "cosh\u207b\u00B9":
-        en.insert(END,ceil(degrees(acosh(int(value)))))
+        en.insert(END, degrees(acosh(float(value))))
     elif op == "tanh\u207b\u00B9":
-        en.insert(END,ceil(degrees(atanh(int(value)))))
+        en.insert(END, degrees(atanh(float(value))))
     elif op == "%":
-        en.insert(END,eval(value+"/100"))
+        en.insert(END, eval(value + "/100"))
     elif op == "!":
         en.insert(END, factorial(int(value)))
     elif op == "\u221A":
         en.insert(END, sqrt(int(value)))
     elif op == "\u03C0":
         en.insert(END, pi)
+
+    history_entry.append(str(en_top.get()) + " = " + str(en.get()))
 
 
 history_entry = []
@@ -131,7 +135,7 @@ def history():
 
 #      0butFont, 1operFont, 2number,   3clear,    4back,    5equal,   6operator,  7screen, 8scrn_font
 color = [["#000", "#fff", "#f1faee", "#e63946", "#f48c06", "#aacc00", "#2a9d8f", "#264653", "#fff"],
-         ["#000", "#000", "#cbf3f0", "#ff9f1c", "#2ec4b6", "#ffbf69", "#2ec4b6", "#fdfffc", "#000"],
+         ["#000", "#000", "#cbf3f0", "#ffbf69", "#2ec4b6", "#ff9f1c", "#2ec4b6", "#fdfffc", "#000"],
          ["#000", "#fff", "#d9d9d9", "#353535", "#353535", "#284b63", "#353535", "#ffffff", "#000"],
          ["#fff", "#fff", "#000", "#000", "#000", "orange", "#000", "#000", "#fff"]]
 
@@ -188,6 +192,9 @@ def theme():
         i.configure(background=color[theme_var.get()][2],
                     fg=color[theme_var.get()][0])
     for i in extra_opt:
+        i.configure(background=color[theme_var.get()][6],
+                    fg=color[theme_var.get()][1])
+    for i in sci_list:
         i.configure(background=color[theme_var.get()][6],
                     fg=color[theme_var.get()][1])
     btn_clear.configure(background=color[theme_var.get()][3],
