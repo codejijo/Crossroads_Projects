@@ -1,32 +1,40 @@
 # Thank you for viewing this code.
 # A huge round of applause to Crossroads team for all those efforts.
 
-# Please check Calculator_beta to view the calculator in devolopment.
 # contact : +919544151856
 # email : jijojohnlikeu@gmail.com
 
-from tkinter import *
 from math import *
+from tkinter import *
+from tkinter import ttk
 
 calc = Tk()
 calc.geometry("300x480+450+100")
-# calc.minsize(300, 480)
+# calc.minsize(300,480)
 calc.resizable(0, 0)
 calc.title("Calculator")
 calc.iconbitmap('./Icon/calc_icon1.ico')
 
-theme_var = IntVar()
-view_var = IntVar()
-inv_var = IntVar()
+theme_var = IntVar()  # To change themes
+view_var = IntVar()   # To toggle scientific view
+inv_var = IntVar()    # To toggle Inverse functions in scientific view
+next_oper = IntVar()  # To clear screen before a new entry
 
 
+# show input on screen
 def show(a):
     if isinstance(a, str):
+        next_oper.set(0)
         en.insert(END, a)
     else:
+        if next_oper.get() == 1:
+            clear("c")
+        next_oper.set(0)
+        # if the input is a tkinter event
         en.insert(END, a.widget["text"])
 
 
+# clear all or delete backwards
 def clear(a):
     if a == "b":
         temp = en.get()
@@ -37,10 +45,12 @@ def clear(a):
         en_top.delete(0, END)
 
 
+# get input, evaluate and show answer
 def operate():
     value = en.get()
     en_top.delete(0, END)
     en.delete(0, END)
+    # To avoid error from input like '10(2+2)'
     if "(" in value:
         if value.split("(")[0][-1:].isnumeric():
             temp = value.split("(")[0] + "*(" + value.split("(")[1]
@@ -49,8 +59,10 @@ def operate():
     en_top.insert(END, str(value))
     en.insert(END, eval(str(value)))
     history_entry.append(str(value) + " = " + str(eval(str(value))))
+    next_oper.set(1)
 
 
+# get value and do scientific operations
 def sci_operate(a):
     value = ""
     if isinstance(a, str):
@@ -58,6 +70,7 @@ def sci_operate(a):
     else:
         op = a.widget["text"]
 
+    # If tried to operate without entering value except for pi.
     if en.get() == "" and op != "\u03C0":
         en_top.delete(0, END)
         en_top.insert(END, "Enter value,then calculate")
@@ -79,7 +92,7 @@ def sci_operate(a):
     if op == "sin":
         en.insert(END, sin(radians(float(value))))
     elif op == "cos":
-        en.insert(END, round(cos(radians(float(value)))))
+        en.insert(END, cos(radians(float(value))))
     elif op == "tan":
         en.insert(END, tan(radians(float(value))))
     elif op == "sinh":
@@ -112,22 +125,32 @@ def sci_operate(a):
     history_entry.append(str(en_top.get()) + " = " + str(en.get()))
 
 
+# To save history
 history_entry = []
 
 
+# Show history and to use selected history.
 def history():
     hist = Tk()
     hist.title("History")
-    hist.geometry("250x150+770+100")
-    hist.minsize(250, 150)
+    hist.geometry("250x320+770+100")
+    hist.minsize(250, 320)
     scrollbar = Scrollbar(hist)
     scrollbar.pack(side=RIGHT, fill=Y)
 
+    def histuse():
+        selection = listbox.get(listbox.curselection())
+        clear("c")
+        en_top.insert(END, selection.split("=")[0])
+        en.insert(END, selection.split("=")[1].strip())
+
     listbox = Listbox(hist, font=("Helvetica", 18, 'normal'))
     listbox.pack(fill=BOTH)
+    use = ttk.Button(hist, text="Use", command=histuse)
+    use.pack(expand=True, fill="both")
 
     if history_entry == []:
-        listbox.insert(END, "Nill")
+        listbox.insert(END, " Empty")
     for i in history_entry:
         listbox.insert(END, " " + i)
 
@@ -137,56 +160,11 @@ def history():
     mainloop()
 
 
-#      0butFont, 1operFont, 2number,   3clear,    4back,    5equal,   6operator,  7screen, 8scrn_font
-color = [["#000", "#fff", "#f1faee", "#e63946", "#f48c06", "#aacc00", "#2a9d8f", "#264653", "#fff"],
-         ["#000", "#000", "#cbf3f0", "#ffbf69", "#2ec4b6", "#ff9f1c", "#2ec4b6", "#fdfffc", "#000"],
-         ["#000", "#fff", "#d9d9d9", "#353535", "#353535", "#284b63", "#353535", "#ffffff", "#000"],
-         ["#fff", "#fff", "#000", "#000", "#000", "orange", "#000", "#000", "#fff"]]
-
-
-def hoverin(a):
-    numbtns[int(a.widget["text"]) - 1].configure(background="#a8dadc", fg="#000")
-
-
-def hoverout(a):
-    numbtns[int(a.widget["text"]) - 1].configure(background=color[theme_var.get()][2], fg=color[theme_var.get()][0])
-
-
-entry_frame = Frame(calc)
-entry_frame.pack(expand=True, fill="both", ipady=12)
-
-en_top = Entry(entry_frame, font=("Helvetica", 16, 'normal'),
-               background=color[theme_var.get()][7],
-               fg=color[theme_var.get()][8],
-               border=0, justify=RIGHT)
-en_top.pack(expand=True, fill="both")
-en = Entry(entry_frame, font=("Helvetica", 25, 'bold'),
-           background=color[theme_var.get()][7],
-           fg=color[theme_var.get()][8],
-           border=0, justify=RIGHT)
-en.pack(expand=True, fill="both", ipady=12)
-
-scienframe = [Frame(entry_frame, background=color[theme_var.get()][7]) for i in range(3)]
-
-btnframe = [Frame(calc) for i in range(5)]
-for i in btnframe:
-    i.pack(expand=True, fill="both")
-
-numbtns = [Button(btnframe[4 - ceil(i / 3)],
-                  text=str(i), font=("Verdana", 22),
-                  relief=GROOVE, border=0,
-                  background=color[theme_var.get()][2],
-                  fg=color[theme_var.get()][0]) for i in range(1, 10)]
-for i in numbtns:
-    i.pack(side=LEFT, expand=True, fill="both")
-    i.bind('<Button-1>', show)
-    i.bind('<Enter>', hoverin)
-    i.bind('<Leave>', hoverout)
-
-
+# For changing theme as selection.
 def theme():
     extra_num = [btn_zero, btn_dot]
     extra_opt = [btn_sqr, btn_div, btn_multi, btn_plus, btn_minus]
+    # value of theme_var become index of list of colors in color list.
     for i in numbtns:
         i.configure(background=color[theme_var.get()][2],
                     fg=color[theme_var.get()][0])
@@ -211,6 +189,7 @@ def theme():
                      fg=color[theme_var.get()][8])
 
 
+# Changes for scientific view.
 def scientific():
     calc.geometry("300x520+450+100")
     for i in scienframe:
@@ -222,6 +201,7 @@ def scientific():
         i.pack(side=LEFT, expand=True, fill="both")
 
 
+# for changing back to standard view.
 def standard():
     for i in sci_list:
         i.pack_forget()
@@ -233,19 +213,12 @@ def standard():
 count = True
 
 
+# For toggling inverse functions in scientific view
 def inverse():
     global count
     count = not count
-    if count:
-        sci_inv.configure(background=color[theme_var.get()][6], fg=color[theme_var.get()][1])
-        for i in sci_list[:6]:
-            temp = i.cget("text")
-            temp1 = temp.replace("\u207b\u00B9", "")
-            i.configure(text=temp1, command="")
-            i.bind('<Button-1>', sci_operate)
-        sci_list[6].configure(text="log", command=lambda: sci_operate("log"))
-        sci_list[7].configure(text="ln", command=lambda: sci_operate("ln"))
-    elif not count:
+    # If inverse is selected
+    if not count:
         sci_inv.configure(background="#f48c06", fg="#fff")
         for i in sci_list[:6]:
             temp = i.cget("text")
@@ -254,8 +227,75 @@ def inverse():
             i.bind('<Button-1>', sci_operate)
         sci_list[6].configure(text="10^", command=lambda: show("10**"))
         sci_list[7].configure(text="e\u02e3", command=lambda: show("e**"))
+    # If not selected
+    elif count:
+        sci_inv.configure(background=color[theme_var.get()][6], fg=color[theme_var.get()][1])
+        for i in sci_list[:6]:
+            temp = i.cget("text")
+            temp1 = temp.replace("\u207b\u00B9", "")
+            i.configure(text=temp1, command="")
+            i.bind('<Button-1>', sci_operate)
+        sci_list[6].configure(text="log", command=lambda: sci_operate("log"))
+        sci_list[7].configure(text="ln", command=lambda: sci_operate("ln"))
 
 
+# Each list of colors for each theme.
+#      0butFont, 1operFont, 2number,   3clear,    4back,    5equal,   6operator,  7screen, 8scrn_font
+color = [["#000", "#fff", "#f1faee", "#e63946", "#f48c06", "#aacc00", "#2a9d8f", "#264653", "#fff"],
+         ["#000", "#000", "#cbf3f0", "#ffbf69", "#2ec4b6", "#ff9f1c", "#2ec4b6", "#fdfffc", "#000"],
+         ["#000", "#fff", "#d9d9d9", "#353535", "#353535", "#284b63", "#353535", "#ffffff", "#000"],
+         ["#000", "#fff", "#edf2f4", "#d80032", "orange", "#2b2d42", "teal", "#073b4c", "#fff"],
+         ["#fff", "#fff", "#000", "#000", "#000", "orange", "#000", "#000", "#fff"]]
+
+
+# For hovering effect of number buttons.
+def hoverin(a):
+    numbtns[int(a.widget["text"]) - 1].configure(background="#a8dadc", fg="#000")
+
+
+def hoverout(a):
+    numbtns[int(a.widget["text"]) - 1].configure(background=color[theme_var.get()][2], fg=color[theme_var.get()][0])
+
+
+# Frame for Entry boxes
+entry_frame = Frame(calc)
+entry_frame.pack(expand=True, fill="both", ipady=12)
+
+# Top entry screen.
+en_top = Entry(entry_frame, font=("Helvetica", 16, 'normal'),
+               background=color[theme_var.get()][7],
+               fg=color[theme_var.get()][8],
+               border=0, justify=RIGHT)
+en_top.pack(expand=True, fill="both")
+# Main entry screen
+en = Entry(entry_frame, font=("Helvetica", 25, 'bold'),
+           background=color[theme_var.get()][7],
+           fg=color[theme_var.get()][8],
+           border=0, justify=RIGHT)
+en.pack(expand=True, fill="both", ipady=12)
+
+# Frame for scientific buttons
+scienframe = [Frame(entry_frame, background=color[theme_var.get()][7]) for i in range(3)]
+
+# Frame for buttons and standard functions.
+btnframe = [Frame(calc) for i in range(5)]
+for i in btnframe:
+    i.pack(expand=True, fill="both")
+
+# Number buttons from 1 to 9
+numbtns = [Button(btnframe[4 - ceil(i / 3)],
+                  text=str(i), font=("Verdana", 22),
+                  relief=GROOVE, border=0,
+                  background=color[theme_var.get()][2],
+                  fg=color[theme_var.get()][0]) for i in range(1, 10)]
+for i in numbtns:
+    i.pack(side=LEFT, expand=True, fill="both")
+    i.bind('<Button-1>', show)
+    i.bind('<Enter>', hoverin)
+    i.bind('<Leave>', hoverout)
+
+
+# Other buttons on standard view.
 btn_clear = Button(btnframe[0], text="C", command=lambda: clear("c"),
                    font=("Verdana", 22, 'bold'), relief=GROOVE,
                    border=0, background=color[theme_var.get()][3],
@@ -307,6 +347,7 @@ btn_equal = Button(btnframe[4], text="=", command=operate,
                    fg=color[theme_var.get()][1])
 btn_equal.pack(side=LEFT, expand=True, fill="both", ipadx=36)
 
+
 # Scientific Buttons
 sci_br1 = Button(scienframe[0], text="  (  ", command=lambda: show("("))
 sci_br2 = Button(scienframe[0], text="  )  ", command=lambda: show(")"))
@@ -326,7 +367,7 @@ sci_root = Button(scienframe[2], text="\u221A", command=lambda: sci_operate("\u2
 sci_list = [sci_sin, sci_cos, sci_tan, sci_sinh, sci_cosh, sci_tanh,
             sci_log, sci_ln, sci_br1, sci_br2, sci_prcnt, sci_fact, sci_pi, sci_root, sci_inv]
 
-
+# Top Menubar and Menu Items
 menubar = Menu(calc)
 
 viewmenu = Menu(menubar, tearoff=0)
@@ -343,7 +384,8 @@ thememenu = Menu(menubar, tearoff=0)
 thememenu.add_radiobutton(label="Default", variable=theme_var, value=0, command=theme)
 thememenu.add_radiobutton(label="light", variable=theme_var, value=1, command=theme)
 thememenu.add_radiobutton(label="Minimal", variable=theme_var, value=2, command=theme)
-thememenu.add_radiobutton(label="Dark", variable=theme_var, value=3, command=theme)
+thememenu.add_radiobutton(label="Vivid", variable=theme_var, value=3, command=theme)
+thememenu.add_radiobutton(label="Dark", variable=theme_var, value=4, command=theme)
 
 menubar.add_cascade(label="Themes", menu=thememenu)
 
@@ -352,5 +394,4 @@ historymenu.add_command(label="Show history", command=history)
 menubar.add_cascade(label="History", menu=historymenu)
 
 calc.config(menu=menubar)
-
 calc.mainloop()

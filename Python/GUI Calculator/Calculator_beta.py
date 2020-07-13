@@ -1,5 +1,5 @@
-from tkinter import *
 from math import *
+from tkinter import *
 from tkinter import ttk
 
 calc = Tk()
@@ -12,13 +12,17 @@ calc.iconbitmap('./Icon/calc_icon1.ico')
 theme_var = IntVar()
 view_var = IntVar()
 inv_var = IntVar()
-
+next_oper = IntVar()
 
 def show(a):
     # print(a)
     if isinstance(a, str):
+        next_oper.set(0)
         en.insert(END, a)
     else:
+        if next_oper.get() == 1:
+            clear("c")
+        next_oper.set(0)
         en.insert(END, a.widget["text"])
 
 
@@ -44,6 +48,7 @@ def operate():
     en_top.insert(END, str(value))
     en.insert(END, eval(str(value)))
     history_entry.append(str(value) + " = " + str(eval(str(value))))
+    next_oper.set(1)
 
 
 def sci_operate(a):
@@ -60,7 +65,7 @@ def sci_operate(a):
         en_top.delete(0, END)
         value = en.get()
 
-    if op == "%" or op == "!":
+    if op == "%" and en.get() != "" or op == "!" and en.get() != "":
         en_top.insert(END, value + op)
     elif op == "\u221A" and en.get() != "":
         en_top.insert(END, op + value)
@@ -74,7 +79,7 @@ def sci_operate(a):
     if op == "sin":
         en.insert(END, sin(radians(float(value))))
     elif op == "cos":
-        en.insert(END, round(cos(radians(float(value)))))
+        en.insert(END, cos(radians(float(value))))
     elif op == "tan":
         en.insert(END, tan(radians(float(value))))
     elif op == "sinh":
@@ -113,16 +118,24 @@ history_entry = []
 def history():
     hist = Tk()
     hist.title("History")
-    hist.geometry("250x150+770+100")
-    hist.minsize(250, 150)
+    hist.geometry("250x320+770+100")
+    hist.minsize(250, 320)
     scrollbar = Scrollbar(hist)
     scrollbar.pack(side=RIGHT, fill=Y)
 
+    def histuse():
+        selection = listbox.get(listbox.curselection())
+        clear("c")
+        en_top.insert(END,selection.split("=")[0])
+        en.insert(END, selection.split("=")[1].strip())
+
     listbox = Listbox(hist, font=("Helvetica", 18, 'normal'))
     listbox.pack(fill=BOTH)
+    use = ttk.Button(hist, text="Use", command=histuse)
+    use.pack(expand=True, fill="both")
 
     if history_entry == []:
-        listbox.insert(END, "Nill")
+        listbox.insert(END, " Empty")
     for i in history_entry:
         print(i)
         listbox.insert(END, " " + i)
@@ -137,6 +150,7 @@ def history():
 color = [["#000", "#fff", "#f1faee", "#e63946", "#f48c06", "#aacc00", "#2a9d8f", "#264653", "#fff"],
          ["#000", "#000", "#cbf3f0", "#ffbf69", "#2ec4b6", "#ff9f1c", "#2ec4b6", "#fdfffc", "#000"],
          ["#000", "#fff", "#d9d9d9", "#353535", "#353535", "#284b63", "#353535", "#ffffff", "#000"],
+         ["#000", "#fff", "#edf2f4", "#d80032", "orange", "#2b2d42", "teal", "#073b4c", "#fff"],
          ["#fff", "#fff", "#000", "#000", "#000", "orange", "#000", "#000", "#fff"]]
 
 
@@ -360,7 +374,8 @@ thememenu = Menu(menubar, tearoff=0)
 thememenu.add_radiobutton(label="Default", variable=theme_var, value=0, command=theme)
 thememenu.add_radiobutton(label="light", variable=theme_var, value=1, command=theme)
 thememenu.add_radiobutton(label="Minimal", variable=theme_var, value=2, command=theme)
-thememenu.add_radiobutton(label="Dark", variable=theme_var, value=3, command=theme)
+thememenu.add_radiobutton(label="Vivid", variable=theme_var, value=3, command=theme)
+thememenu.add_radiobutton(label="Dark", variable=theme_var, value=4, command=theme)
 
 menubar.add_cascade(label="Themes", menu=thememenu)
 

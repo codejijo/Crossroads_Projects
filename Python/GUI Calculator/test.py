@@ -82,8 +82,10 @@ def theme():
 def custom():
     if a.get() == 2:
         temp1 = colorchooser.askcolor(color="white", title="Background")
+        print(temp1[1])
         color[2].insert(0, temp1[1])
         temp2 = colorchooser.askcolor(color="black", title="Text")
+        print(temp2[1])
         color[2].insert(1, temp2[1])
         theme()
 
@@ -124,6 +126,10 @@ li = [bt3, bt4, ch4,ch5]
 print(degrees(asin(1)))
 print(ceil(cos(radians(90))))
 print(ceil(tan(radians(45))))
+
+j = "#7a7a7a"
+k = j.strip("#")
+print(int(k,16))
 
 root.mainloop()
 
