@@ -10,8 +10,8 @@ from tkinter import ttk
 
 calc = Tk()
 calc.geometry("300x480+450+100")
-# calc.minsize(300,480)
-calc.resizable(0, 0)
+calc.minsize(300,480)
+# calc.resizable(0, 0)
 calc.title("Calculator")
 calc.iconbitmap('./Icon/calc_icon1.ico')
 

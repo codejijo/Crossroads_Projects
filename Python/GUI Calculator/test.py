@@ -82,7 +82,7 @@ def theme():
 def custom():
     if a.get() == 2:
         temp1 = colorchooser.askcolor(color="white", title="Background")
-        print(temp1[1])
+        print(temp1[0])
         color[2].insert(0, temp1[1])
         temp2 = colorchooser.askcolor(color="black", title="Text")
         print(temp2[1])
